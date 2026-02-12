@@ -1,15 +1,146 @@
 export default function HomePage() {
+  const stars = Array.from({ length: 48 });
+
   return (
-    <main
-      style={{
-        minHeight: '100vh',
-        display: 'grid',
-        placeItems: 'center',
-        background: '#111827',
-        color: '#f9fafb',
-      }}
-    >
-      <h1 style={{ fontSize: '3rem' }}>Hello, World!</h1>
+    <main className="space-scene">
+      <section className="system" aria-label="星环行星动画">
+        <div className="orbit" />
+        <div className="planet" />
+        <div className="star-ring" aria-hidden="true">
+          {stars.map((_, index) => {
+            const angle = (index / stars.length) * 360;
+            const delay = -(index * 0.18);
+            const size = 2 + (index % 3);
+
+            return (
+              <span
+                key={index}
+                className="star"
+                style={{
+                  '--angle': `${angle}deg`,
+                  '--delay': `${delay}s`,
+                  '--size': `${size}px`,
+                }}
+              />
+            );
+          })}
+        </div>
+      </section>
+
+      <style jsx>{`
+        .space-scene {
+          min-height: 100vh;
+          display: grid;
+          place-items: center;
+          overflow: hidden;
+          background:
+            radial-gradient(circle at 20% 20%, rgba(56, 189, 248, 0.25), transparent 35%),
+            radial-gradient(circle at 85% 10%, rgba(99, 102, 241, 0.2), transparent 30%),
+            radial-gradient(circle at 50% 120%, rgba(147, 51, 234, 0.35), transparent 45%),
+            #020617;
+        }
+
+        .system {
+          position: relative;
+          width: 420px;
+          height: 420px;
+          display: grid;
+          place-items: center;
+          filter: drop-shadow(0 0 40px rgba(96, 165, 250, 0.2));
+        }
+
+        .planet {
+          position: absolute;
+          width: 130px;
+          height: 130px;
+          border-radius: 50%;
+          background:
+            radial-gradient(circle at 30% 25%, #fef9c3 0 16%, #f59e0b 40%, #b45309 100%);
+          box-shadow:
+            inset -24px -18px 35px rgba(120, 53, 15, 0.55),
+            0 0 34px rgba(251, 191, 36, 0.45);
+          z-index: 3;
+        }
+
+        .orbit {
+          position: absolute;
+          width: 280px;
+          height: 280px;
+          border-radius: 50%;
+          border: 1px solid rgba(148, 163, 184, 0.22);
+          transform: rotateX(68deg) rotateZ(18deg);
+          z-index: 2;
+        }
+
+        .star-ring {
+          position: absolute;
+          inset: 0;
+          animation: spin 16s linear infinite;
+          transform-style: preserve-3d;
+          z-index: 4;
+        }
+
+        .star {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          width: var(--size);
+          height: var(--size);
+          margin: calc(var(--size) / -2);
+          border-radius: 50%;
+          background: #fff;
+          box-shadow: 0 0 10px rgba(255, 255, 255, 0.9);
+          transform:
+            rotate(var(--angle))
+            translateX(145px)
+            scale(0.6);
+          animation: twinkle 2.5s ease-in-out infinite;
+          animation-delay: var(--delay);
+          opacity: 0.9;
+        }
+
+        @keyframes spin {
+          from {
+            transform: rotate(0deg) rotateX(68deg) rotateZ(18deg);
+          }
+          to {
+            transform: rotate(360deg) rotateX(68deg) rotateZ(18deg);
+          }
+        }
+
+        @keyframes twinkle {
+          0%,
+          100% {
+            opacity: 0.35;
+            filter: blur(0.2px);
+          }
+          50% {
+            opacity: 1;
+            filter: blur(0);
+          }
+        }
+
+        @media (max-width: 520px) {
+          .system {
+            width: 320px;
+            height: 320px;
+          }
+
+          .planet {
+            width: 96px;
+            height: 96px;
+          }
+
+          .orbit {
+            width: 220px;
+            height: 220px;
+          }
+
+          .star {
+            transform: rotate(var(--angle)) translateX(112px) scale(0.6);
+          }
+        }
+      `}</style>
     </main>
   );
 }
