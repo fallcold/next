@@ -571,7 +571,7 @@ export default function HomePage() {
       const normY = event.clientY / window.innerHeight;
       targetRotX = -0.6 + (1 - normY) * 1.6;
       if (statusRef.current) {
-        statusRef.current.innerHTML = "系统状态: 鼠标操控<br>输入信号: <span class='highlight'>已锁定</span>";
+        statusRef.current.innerHTML = `系统状态: 鼠标操控<br>输入信号: <span class="${styles.highlight}">已锁定</span>`;
       }
     };
 

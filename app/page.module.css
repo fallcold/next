@@ -42,7 +42,7 @@
   font-family: monospace;
 }
 
-:global(.highlight) {
+.highlight {
   color: #c5a059;
   font-weight: 700;
 }
