@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import Script from 'next/script';
+import { useEffect, useRef } from 'react';
+import * as THREE from 'three';
 import styles from './page.module.css';
 
 const VERTEX_SHADER = `
@@ -222,12 +222,9 @@ export default function HomePage() {
   const containerRef = useRef(null);
   const statusRef = useRef(null);
   const loadingRef = useRef(null);
-  const [threeReady, setThreeReady] = useState(false);
 
   useEffect(() => {
-    if (!threeReady || !containerRef.current || !window.THREE) return;
-
-    const THREE = window.THREE;
+    if (!containerRef.current) return;
     let animationId;
     let scene;
     let camera;
@@ -250,6 +247,11 @@ export default function HomePage() {
     const container = containerRef.current;
 
     const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
+
+    if (!window.WebGLRenderingContext) {
+      if (loadingRef.current) loadingRef.current.textContent = "当前浏览器环境不支持 WebGL。";
+      return;
+    }
 
     function createPlanet(group, c1, c2, nScale, pos, radius, atmo) {
       const geo = new THREE.SphereGeometry(radius, 48, 48);
@@ -303,7 +305,7 @@ export default function HomePage() {
     }
 
     function initSaturn() {
-      const particleCount = 240000;
+      const particleCount = 120000;
       const geometry = new THREE.BufferGeometry();
       const positions = new Float32Array(particleCount * 3);
       const colors = new Float32Array(particleCount * 3);
@@ -650,7 +652,7 @@ export default function HomePage() {
       }
       renderer?.dispose();
     };
-  }, [threeReady]);
+  }, []);
 
   const toggleFullScreen = () => {
     if (!document.fullscreenElement) {
@@ -662,8 +664,6 @@ export default function HomePage() {
 
   return (
     <>
-      <Script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" strategy="beforeInteractive" onLoad={() => setThreeReady(true)} />
-
       <div className={styles.canvasContainer} ref={containerRef} />
 
       <a id="author-btn" className={styles.authorBtn} href="https://www.yjln.com" target="_blank" rel="noreferrer">
@@ -673,7 +673,7 @@ export default function HomePage() {
       <div className={styles.fpsCounter}>渲染模式: 粒子土星 | 操作方式: 鼠标移动/滚轮缩放/拖拽微调</div>
 
       <div id="loading" className={styles.loading} ref={loadingRef}>
-        正在构建粒子与行星数据...
+        正在初始化 3D 引擎与粒子数据...
       </div>
 
       <div className={styles.uiLayer}>
@@ -687,7 +687,7 @@ export default function HomePage() {
             <br />
             {'>'} 开普勒轨道: 运行中
             <br />
-            {'>'} 粒子总数: 24万+
+            {'>'} 粒子总数: 12万+
             <br />
             {'>'} 背景环境: 行星已加载
           </div>
